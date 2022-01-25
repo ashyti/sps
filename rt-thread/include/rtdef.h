@@ -565,6 +565,7 @@ struct rt_thread
     /* stack point and entry */
     void       *sp;                                     /**< stack point */
     void       *entry;                                  /**< entry */
+    void       *entry_callback;                         /**< entry */
     void       *parameter;                              /**< parameter */
     void       *stack_addr;                             /**< stack address */
     rt_uint32_t stack_size;                             /**< stack size */
@@ -591,6 +592,7 @@ struct rt_thread
     rt_uint8_t  high_mask;
 #endif
     rt_uint32_t number_mask;
+    rt_uint32_t period;					/** < periodicity of the task */
 
 #if defined(RT_USING_EVENT)
     /* thread event */
@@ -613,6 +615,7 @@ struct rt_thread
     rt_ubase_t  remaining_tick;                         /**< remaining tick */
 
     struct rt_timer thread_timer;                       /**< built-in thread timer */
+    struct rt_timer thread_period_timer;                /**< period of the thread */
 
     void (*cleanup)(struct rt_thread *tid);             /**< cleanup function when thread exit */
 
