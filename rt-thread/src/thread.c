@@ -430,7 +430,7 @@ rt_thread_t rt_thread_create(const char *name,
 }
 RTM_EXPORT(rt_thread_create);
 
-static void rt_periodic_task_f(void *param)
+static void rt_periodic_task_func(void *param)
 {
     rt_thread_t thread = rt_thread_self();
 
@@ -483,7 +483,7 @@ rt_thread_t rt_thread_create_periodic(const char *name,
                                       rt_uint32_t tick,
                                       rt_uint32_t period)
 {
-    void (*__entry)(void *parameter) = period ? rt_periodic_task_f : entry;
+    void (*__entry)(void *parameter) = period ? rt_periodic_task_func : entry;
     rt_thread_t thread;
 
     thread = rt_thread_create(name, __entry, parameter,
