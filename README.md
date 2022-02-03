@@ -1,9 +1,26 @@
-# Smart Power Switch based in RT-Thread
+# Smart Power Switch (SPS) based in RT-Thread
 
-This is a test.
+The SPS handles the power on an array of devices. A common use is a testing farm where the SPS is able
+to detect unresponsive machines and send feedback to the user. On the other hand, the user can decide
+to power on and/or off the machines connected.
 
-# QEMU/VExpress A9板级支持包说明
 
+
+## SPS architecture
+
+The architecture of the Smart Power Switch and some external components are describe as following:
+
+![SPS diagram](/images/sps_diagram.png)
+
+- The SPS: is the controller unit of the system. Allowing users to easily interact with the testing farm.
+- The host: represents the interface with the user (a Raspberry Pi is shown as an example). To avoid using any external hardware, the host device is simulated with different threads inside the RT-Thread OS. 
+  The host device serves two purposes.
+  - Displays the power status of all target machines to the user.
+  - Allows the user to power ON/OFF any target machine.
+- The Target devices: represents a set of servers within a testing farm. Each device is simulated by a periodic task.
+ 
+
+##  Original README is below
 ## 1. 简介
 
 
