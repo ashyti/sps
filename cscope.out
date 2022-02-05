@@ -1,0 +1,1073 @@
+cscope 15 /mnt/c/RT-ThreadStudio/workspace/sps               0000006074
+	@cconfig.h
+
+1 #iâdeà
+CCONFIG_H__
+
+
+2 
+	#CCONFIG_H__
+
+
+	)
+
+6 
+	#HAVE_NEWLIB_H
+ 1
+
+	)
+
+7 
+	#LIBC_VERSION
+ "Ãwlib 2.4.0"
+
+	)
+
+9 
+	#HAVE_SYS_SIGNAL_H
+ 1
+
+	)
+
+10 
+	#HAVE_SYS_SELECT_H
+ 1
+
+	)
+
+11 
+	#HAVE_PTHREAD_H
+ 1
+
+	)
+
+13 
+	#HAVE_FDSET
+ 1
+
+	)
+
+14 
+	#HAVE_SIGACTION
+ 1
+
+	)
+
+15 
+	#GCC_VERSION_STR
+ "5.4.1 20160919 (»Ëa£è[ARM/embedded-5-b¿nch„evisiÚ 240496]"
+
+	)
+
+16 
+	#STDC
+ "2011"
+
+	)
+
+	@rtconfig.h
+
+1 #iâdeà
+RT_CONFIG_H__
+
+
+2 
+	#RT_CONFIG_H__
+
+
+	)
+
+8 
+	#RT_NAME_MAX
+ 8
+
+	)
+
+9 
+	#RT_USING_SMP
+
+
+	)
+
+10 
+	#RT_CPUS_NR
+ 2
+
+	)
+
+11 
+	#RT_ALIGN_SIZE
+ 4
+
+	)
+
+12 
+	#RT_THREAD_PRIORITY_32
+
+
+	)
+
+13 
+	#RT_THREAD_PRIORITY_MAX
+ 32
+
+	)
+
+14 
+	#RT_TICK_PER_SECOND
+ 100
+
+	)
+
+15 
+	#RT_USING_OVERFLOW_CHECK
+
+
+	)
+
+16 
+	#RT_USING_HOOK
+
+
+	)
+
+17 
+	#RT_USING_IDLE_HOOK
+
+
+	)
+
+18 
+	#RT_IDLE_HOOK_LIST_SIZE
+ 4
+
+	)
+
+19 
+	#IDLE_THREAD_STACK_SIZE
+ 1024
+
+	)
+
+20 
+	#RT_USING_TIMER_SOFT
+
+
+	)
+
+21 
+	#RT_TIMER_THREAD_PRIO
+ 4
+
+	)
+
+22 
+	#RT_TIMER_THREAD_STACK_SIZE
+ 1024
+
+	)
+
+23 
+	#RT_DEBUG
+
+
+	)
+
+24 
+	#RT_DEBUG_COLOR
+
+
+	)
+
+28 
+	#RT_USING_SEMAPHORE
+
+
+	)
+
+29 
+	#RT_USING_MUTEX
+
+
+	)
+
+30 
+	#RT_USING_EVENT
+
+
+	)
+
+31 
+	#RT_USING_MAILBOX
+
+
+	)
+
+32 
+	#RT_USING_MESSAGEQUEUE
+
+
+	)
+
+33 
+	#RT_USING_SIGNALS
+
+
+	)
+
+38 
+	#RT_USING_MEMPOOL
+
+
+	)
+
+39 
+	#RT_USING_MEMHEAP
+
+
+	)
+
+40 
+	#RT_USING_SMALL_MEM
+
+
+	)
+
+41 
+	#RT_USING_MEMTRACE
+
+
+	)
+
+42 
+	#RT_USING_HEAP
+
+
+	)
+
+47 
+	#RT_USING_DEVICE
+
+
+	)
+
+48 
+	#RT_USING_DEVICE_OPS
+
+
+	)
+
+49 
+	#RT_USING_INTERRUPT_INFO
+
+
+	)
+
+50 
+	#RT_USING_CONSOLE
+
+
+	)
+
+51 
+	#RT_CONSOLEBUF_SIZE
+ 256
+
+	)
+
+52 
+	#RT_CONSOLE_DEVICE_NAME
+ "u¬t0"
+
+	)
+
+54 
+	#RT_VER_NUM
+ 0x40002
+
+	)
+
+56 
+	#ARCH_ARM
+
+
+	)
+
+57 
+	#ARCH_ARM_CORTEX_A
+
+
+	)
+
+58 
+	#ARCH_ARM_CORTEX_A9
+
+
+	)
+
+62 
+	#RT_USING_COMPONENTS_INIT
+
+
+	)
+
+63 
+	#RT_USING_USER_MAIN
+
+
+	)
+
+64 
+	#RT_MAIN_THREAD_STACK_SIZE
+ 2048
+
+	)
+
+65 
+	#RT_MAIN_THREAD_PRIORITY
+ 10
+
+	)
+
+69 
+	#RT_USING_CPLUSPLUS
+
+
+	)
+
+74 
+	#RT_USING_FINSH
+
+
+	)
+
+75 
+	#FINSH_THREAD_NAME
+ "tsh–l"
+
+	)
+
+76 
+	#FINSH_USING_HISTORY
+
+
+	)
+
+77 
+	#FINSH_HISTORY_LINES
+ 5
+
+	)
+
+78 
+	#FINSH_USING_SYMTAB
+
+
+	)
+
+79 
+	#FINSH_USING_DESCRIPTION
+
+
+	)
+
+80 
+	#FINSH_THREAD_PRIORITY
+ 20
+
+	)
+
+81 
+	#FINSH_THREAD_STACK_SIZE
+ 4096
+
+	)
+
+82 
+	#FINSH_CMD_SIZE
+ 80
+
+	)
+
+83 
+	#FINSH_USING_MSH
+
+
+	)
+
+84 
+	#FINSH_USING_MSH_DEFAULT
+
+
+	)
+
+85 
+	#FINSH_ARG_MAX
+ 10
+
+	)
+
+90 
+	#RT_USING_DFS
+
+
+	)
+
+91 
+	#DFS_USING_WORKDIR
+
+
+	)
+
+92 
+	#DFS_FILESYSTEMS_MAX
+ 2
+
+	)
+
+93 
+	#DFS_FILESYSTEM_TYPES_MAX
+ 8
+
+	)
+
+94 
+	#DFS_FD_MAX
+ 16
+
+	)
+
+95 
+	#RT_USING_DFS_ELMFAT
+
+
+	)
+
+99 
+	#RT_DFS_ELM_CODE_PAGE
+ 437
+
+	)
+
+100 
+	#RT_DFS_ELM_WORD_ACCESS
+
+
+	)
+
+101 
+	#RT_DFS_ELM_USE_LFN_3
+
+
+	)
+
+102 
+	#RT_DFS_ELM_USE_LFN
+ 3
+
+	)
+
+103 
+	#RT_DFS_ELM_MAX_LFN
+ 255
+
+	)
+
+104 
+	#RT_DFS_ELM_DRIVES
+ 2
+
+	)
+
+105 
+	#RT_DFS_ELM_MAX_SECTOR_SIZE
+ 4096
+
+	)
+
+106 
+	#RT_DFS_ELM_REENTRANT
+
+
+	)
+
+108 
+	#RT_USING_DFS_DEVFS
+
+
+	)
+
+109 
+	#RT_USING_DFS_ROMFS
+
+
+	)
+
+110 
+	#RT_USING_DFS_RAMFS
+
+
+	)
+
+115 
+	#RT_USING_DEVICE_IPC
+
+
+	)
+
+116 
+	#RT_PIPE_BUFSZ
+ 512
+
+	)
+
+117 
+	#RT_USING_SYSTEM_WORKQUEUE
+
+
+	)
+
+118 
+	#RT_SYSTEM_WORKQUEUE_STACKSIZE
+ 2048
+
+	)
+
+119 
+	#RT_SYSTEM_WORKQUEUE_PRIORITY
+ 23
+
+	)
+
+120 
+	#RT_USING_SERIAL
+
+
+	)
+
+121 
+	#RT_SERIAL_USING_DMA
+
+
+	)
+
+122 
+	#RT_SERIAL_RB_BUFSZ
+ 64
+
+	)
+
+123 
+	#RT_USING_I2C
+
+
+	)
+
+124 
+	#RT_USING_I2C_BITOPS
+
+
+	)
+
+125 
+	#RT_USING_PIN
+
+
+	)
+
+126 
+	#RT_USING_MTD_NOR
+
+
+	)
+
+127 
+	#RT_USING_MTD_NAND
+
+
+	)
+
+128 
+	#RT_MTD_NAND_DEBUG
+
+
+	)
+
+129 
+	#RT_USING_RTC
+
+
+	)
+
+130 
+	#RT_USING_SOFT_RTC
+
+
+	)
+
+131 
+	#RT_USING_SDIO
+
+
+	)
+
+132 
+	#RT_SDIO_STACK_SIZE
+ 512
+
+	)
+
+133 
+	#RT_SDIO_THREAD_PRIORITY
+ 15
+
+	)
+
+134 
+	#RT_MMCSD_STACK_SIZE
+ 1024
+
+	)
+
+135 
+	#RT_MMCSD_THREAD_PREORITY
+ 22
+
+	)
+
+136 
+	#RT_MMCSD_MAX_PARTITION
+ 16
+
+	)
+
+137 
+	#RT_USING_SPI
+
+
+	)
+
+138 
+	#RT_USING_SPI_MSD
+
+
+	)
+
+139 
+	#RT_USING_SFUD
+
+
+	)
+
+140 
+	#RT_SFUD_USING_SFDP
+
+
+	)
+
+141 
+	#RT_SFUD_USING_FLASH_INFO_TABLE
+
+
+	)
+
+142 
+	#RT_SFUD_SPI_MAX_HZ
+ 50000000
+
+	)
+
+143 
+	#RT_USING_WDT
+
+
+	)
+
+152 
+	#RT_USING_LIBC
+
+
+	)
+
+153 
+	#RT_USING_PTHREADS
+
+
+	)
+
+154 
+	#PTHREAD_NUM_MAX
+ 8
+
+	)
+
+155 
+	#RT_USING_POSIX
+
+
+	)
+
+156 
+	#RT_USING_POSIX_MMAP
+
+
+	)
+
+157 
+	#RT_USING_POSIX_TERMIOS
+
+
+	)
+
+158 
+	#RT_USING_POSIX_AIO
+
+
+	)
+
+165 
+	#RT_USING_SAL
+
+
+	)
+
+169 
+	#SAL_USING_LWIP
+
+
+	)
+
+171 
+	#SAL_USING_POSIX
+
+
+	)
+
+176 
+	#RT_USING_NETDEV
+
+
+	)
+
+177 
+	#NETDEV_USING_IFCONFIG
+
+
+	)
+
+178 
+	#NETDEV_USING_PING
+
+
+	)
+
+179 
+	#NETDEV_USING_NETSTAT
+
+
+	)
+
+180 
+	#NETDEV_USING_AUTO_DEFAULT
+
+
+	)
+
+181 
+	#NETDEV_IPV4
+ 1
+
+	)
+
+182 
+	#NETDEV_IPV6
+ 0
+
+	)
+
+187 
+	#RT_USING_LWIP
+
+
+	)
+
+188 
+	#RT_USING_LWIP202
+
+
+	)
+
+189 
+	#RT_LWIP_IGMP
+
+
+	)
+
+190 
+	#RT_LWIP_ICMP
+
+
+	)
+
+191 
+	#RT_LWIP_DNS
+
+
+	)
+
+192 
+	#RT_LWIP_DHCP
+
+
+	)
+
+193 
+	#IP_SOF_BROADCAST
+ 1
+
+	)
+
+194 
+	#IP_SOF_BROADCAST_RECV
+ 1
+
+	)
+
+198 
+	#RT_LWIP_IPADDR
+ "192.168.1.30"
+
+	)
+
+199 
+	#RT_LWIP_GWADDR
+ "192.168.1.1"
+
+	)
+
+200 
+	#RT_LWIP_MSKADDR
+ "255.255.255.0"
+
+	)
+
+202 
+	#RT_LWIP_UDP
+
+
+	)
+
+203 
+	#RT_LWIP_TCP
+
+
+	)
+
+204 
+	#RT_LWIP_RAW
+
+
+	)
+
+205 
+	#RT_MEMP_NUM_NETCONN
+ 8
+
+	)
+
+206 
+	#RT_LWIP_PBUF_NUM
+ 16
+
+	)
+
+207 
+	#RT_LWIP_RAW_PCB_NUM
+ 4
+
+	)
+
+208 
+	#RT_LWIP_UDP_PCB_NUM
+ 4
+
+	)
+
+209 
+	#RT_LWIP_TCP_PCB_NUM
+ 4
+
+	)
+
+210 
+	#RT_LWIP_TCP_SEG_NUM
+ 40
+
+	)
+
+211 
+	#RT_LWIP_TCP_SND_BUF
+ 8196
+
+	)
+
+212 
+	#RT_LWIP_TCP_WND
+ 8196
+
+	)
+
+213 
+	#RT_LWIP_TCPTHREAD_PRIORITY
+ 10
+
+	)
+
+214 
+	#RT_LWIP_TCPTHREAD_MBOX_SIZE
+ 8
+
+	)
+
+215 
+	#RT_LWIP_TCPTHREAD_STACKSIZE
+ 1024
+
+	)
+
+216 
+	#RT_LWIP_ETHTHREAD_PRIORITY
+ 12
+
+	)
+
+217 
+	#RT_LWIP_ETHTHREAD_STACKSIZE
+ 1024
+
+	)
+
+218 
+	#RT_LWIP_ETHTHREAD_MBOX_SIZE
+ 8
+
+	)
+
+219 
+	#RT_LWIP_REASSEMBLY_FRAG
+
+
+	)
+
+220 
+	#LWIP_NETIF_STATUS_CALLBACK
+ 1
+
+	)
+
+221 
+	#LWIP_NETIF_LINK_CALLBACK
+ 1
+
+	)
+
+222 
+	#SO_REUSE
+ 1
+
+	)
+
+223 
+	#LWIP_SO_RCVTIMEO
+ 1
+
+	)
+
+224 
+	#LWIP_SO_SNDTIMEO
+ 1
+
+	)
+
+225 
+	#LWIP_SO_RCVBUF
+ 1
+
+	)
+
+226 
+	#LWIP_NETIF_LOOPBACK
+ 0
+
+	)
+
+227 
+	#RT_LWIP_USING_PING
+
+
+	)
+
+242 
+	#RT_USING_LWP
+
+
+	)
+
+335 
+	#SOC_VEXPRESS_A9
+
+
+	)
+
+336 
+	#RT_USING_UART0
+
+
+	)
+
+337 
+	#RT_USING_UART1
+
+
+	)
+
+338 
+	#BSP_DRV_EMAC
+
+
+	)
+
+	@rtconfig_preinc.h
+
+2 #iâdeà
+RTCONFIG_PREINC_H__
+
+
+3 
+	#RTCONFIG_PREINC_H__
+
+
+	)
+
+8 
+	#HAVE_CCONFIG_H
+
+
+	)
+
+9 
+	#RT_USING_NEWLIB
+
+
+	)
+
+	@
+1
+.
+1
+/usr/include
+3
+39
+cconfig.h
+rtconfig.h
+rtconfig_preinc.h
