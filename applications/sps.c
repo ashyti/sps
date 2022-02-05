@@ -48,11 +48,9 @@ void sps_read_gpio(void* parameter)
 
 ALIGN(RT_ALIGN_SIZE)
 static char sps_set_gpio_thread_stack[1024];
-static char sps_read_gpio_thread_stack[1024];
 
-static struct rt_thread sps_set_gpio1_thread;
-static struct rt_thread sps_set_gpio2_thread;
-
+static rt_thread_t sps_set_gpio1_thread;
+static rt_thread_t sps_set_gpio2_thread;
 static rt_thread_t sps_read_gpio1_thread;
 
 int mailbox_test(void)
@@ -73,27 +71,23 @@ int mailbox_test(void)
     }
 
     //initialize thread
-    rt_thread_init(&sps_set_gpio1_thread,
-                   "sps_set_gpio1 thread",
+    sps_set_gpio1_thread = rt_thread_create("sps_set_gpio1 thread",
                    sps_set_gpio,
                    &gpio_1,
-                   &sps_set_gpio_thread_stack[0],
                    sizeof(sps_set_gpio_thread_stack),
                    THREAD_PRIORITY,
                    THREAD_TIMESLICE);
 
-    rt_thread_startup(&sps_set_gpio1_thread);
+    rt_thread_startup(sps_set_gpio1_thread);
 
-    rt_thread_init(&sps_set_gpio2_thread,
-                   "sps_set_gpio2 thread",
+    sps_set_gpio2_thread = rt_thread_create("sps_set_gpio2 thread",
                    sps_set_gpio,
                    &gpio_2,
-                   &sps_set_gpio_thread_stack[0],
                    sizeof(sps_set_gpio_thread_stack),
                    THREAD_PRIORITY,
                    THREAD_TIMESLICE);
 
-    rt_thread_startup(&sps_set_gpio2_thread);
+    rt_thread_startup(sps_set_gpio2_thread);
 
     sps_read_gpio1_thread = rt_thread_create_periodic("sps_read_gpio1_thread",
                    sps_read_gpio,
