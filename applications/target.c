@@ -93,7 +93,7 @@ static void simulation_thread_entry(void* parameter)
 
 target_t target_init(rt_mailbox_t mb_ping, rt_mailbox_t mb_gpio)
 {
-    printf("Initializing target\n");
+    //printf("Initializing target\n");
 
     target.simulation_thread = rt_thread_create_periodic("target_simulation",
                                                     simulation_thread_entry,
@@ -105,7 +105,7 @@ target_t target_init(rt_mailbox_t mb_ping, rt_mailbox_t mb_gpio)
     target.mb_ping = mb_ping;
     target.mb_gpio = mb_gpio;
 
-    printf("Target initialized\n");
+    //printf("Target initialized\n");
 
     return &target;
 }
@@ -113,13 +113,13 @@ target_t target_init(rt_mailbox_t mb_ping, rt_mailbox_t mb_gpio)
 
 rt_err_t target_start(target_t target)
 {
-    printf("Starting target`s threads\n");
+    //printf("Starting target`s threads\n");
 
     rt_thread_startup(target->simulation_thread);
 
     srand(time(0)); //Initialize seed for random numbers
 
-    printf("Target`s threads started\n");
+    //printf("Target`s threads started\n");
     return RT_EOK;
 }
 

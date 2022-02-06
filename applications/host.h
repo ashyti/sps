@@ -17,11 +17,12 @@ struct host {
     rt_mailbox_t irq_in;
 
     rt_uint8_t targets[SPS_NUM_TARGETS];
-    rt_sem_t target_sem; /* guards the targets */
+    rt_mutex_t target_mutex; /* guards the targets */
 };
 typedef struct host *host_t;
 
 host_t host_init(rt_mailbox_t irq_out, rt_mailbox_t irq_in);
 rt_err_t host_start(host_t host);
+void host_delete(host_t host);
 
 #endif

@@ -18,11 +18,12 @@ struct sps {
     rt_mailbox_t gpio[SPS_NUM_TARGETS];
 
     rt_uint8_t targets[SPS_NUM_TARGETS];
-    rt_sem_t target_sem; /* guards the targets */
+    rt_mutex_t target_mutex; /* guards the targets */
 };
 typedef struct sps *sps_t;
 
 sps_t sps_init(void);
 rt_err_t sps_start(sps_t sps);
+void sps_delete(sps_t sps);
 
 #endif
