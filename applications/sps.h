@@ -1,21 +1,28 @@
 #ifndef __SPS_H__
 #define __SPS_H__
 
-struct sps
-{
-    rt_thread_t irq_in_handler;         /**< IRQ_IN Handler */
-    rt_thread_t irq_out_handler;        /**< IRQ_OUT Handler */
-    rt_thread_t gpio_setting;           /**< Set GPIO Thread */
-    rt_thread_t ping_thread;            /**< Ping Thread */
+#include "main.h"
 
-    rt_uint32_t irq_in;                 /**< IRQ_IN message */
-    rt_uint32_t irq_out;                /**< IRQ_OUT message */
-    rt_uint32_t gpio[SPS_NUM_TARGETS];  /**< GPIO message */
-    rt_uint32_t ping[SPS_NUM_TARGETS];  /**< Ping message */
+struct sps {
+    rt_thread_t irq_in_handler;
+    rt_thread_t irq_out_handler;
+    /*
+    rt_thread_t gpio_setting;
+    */
+    rt_thread_t ping_thread;
+
+
+    rt_mailbox_t irq_out;
+    rt_mailbox_t irq_in;
+    rt_mailbox_t mb_ping;
+    rt_mailbox_t gpio[SPS_NUM_TARGETS];
+
+    rt_uint8_t targets[SPS_NUM_TARGETS];
+    rt_sem_t target_sem; /* guards the targets */
 };
+typedef struct sps *sps_t;
 
-int sps_init(struct sps *sps);
-int sps_start(struct sps *sps);
-
+sps_t sps_init(void);
+rt_err_t sps_start(sps_t sps);
 
 #endif

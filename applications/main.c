@@ -4,35 +4,35 @@
 
 #include "main.h"
 #include "host.h"
-#include "target.h"
 #include "sps.h"
+#include "target.h"
 
 int main(void)
 {
-    int ret;
-    struct system system;
+    sps_t sps;
+    host_t host;
+    target_t target;
+    rt_err_t ret;
 
     printf("hello rt-thread\n");
-/*
-    ret = host_init(&system.host);
 
-    ret = sps_init(&system.sps);
- */
-
-    rt_mb_init(system.target[0].mb_gpio,
-                "GPIO_mailbox",
-                system.target[0].mb_gpio_pool,                /* The memory pool used by the mailbox is mb_pool */
-                sizeof(system.target[0].mb_gpio_pool) / 4,        /* The number of messages in the mailbox because a message occupies 4 bytes */
-                RT_IPC_FLAG_FIFO);
+    sps = sps_init();
+    if (!sps)
+        /* handle error */ ;
+    host = host_init(sps->irq_out, sps->irq_in);
+    if (!host) {
+        printf("Failed to create host\n");
+        return RT_ERROR;
+    }
 
 
-    ret = target_init(&system.target[0]);
-    ret = target_start(&system.target[0]);
+    target = target_init(sps->mb_ping, sps->gpio[0]);
 
-    rt_mb_send(system.target[0].mb_gpio, 0);
+    ret = sps_start(sps);
+    ret = host_start(host);
+    ret = target_start(target);
 
-    rt_mb_send(system.target[0].mb_gpio, 1);
-
+    printf("bye rt-thread\n");
 
     return ret;
 }

@@ -3,19 +3,25 @@
 
 #include <rtdef.h>
 
-#define SPS_HOST_ACTION_PERIOD  500
+#include "main.h"
+
+#define SPS_HOST_ACTION_PERIOD  500 /* 5 seconds */
 
 struct host {
     rt_thread_t action_thread;
-    rt_thread_t feedback_irq_in_handler;
+    rt_thread_t feedback_irq_out_handler;
 
-    rt_mq_t irq_out;
-    rt_mq_t irq_in;
+    /* from sps to host */
+    rt_mailbox_t irq_out;
+    /* from host to sps */
+    rt_mailbox_t irq_in;
 
-    rt_uint8_t targets[4];
+    rt_uint8_t targets[SPS_NUM_TARGETS];
+    rt_sem_t target_sem; /* guards the targets */
 };
+typedef struct host *host_t;
 
-int host_init(struct host *host);
-int host_start(struct host *host);
+host_t host_init(rt_mailbox_t irq_out, rt_mailbox_t irq_in);
+rt_err_t host_start(host_t host);
 
 #endif

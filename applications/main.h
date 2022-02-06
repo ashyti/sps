@@ -1,18 +1,19 @@
 #ifndef __MAIN_H__
 #define __MAIN_H__
 
+#include <rtdef.h>
+
 #define SPS_THREAD_STACK_SIZE   1024
 #define SPS_NUM_TARGETS            4
 
-#include "host.h"
-#include "target.h"
-#include "sps.h"
+#define bool _Bool
 
-struct system {
-    struct host host;
-    struct sps sps;
-    struct target target[SPS_NUM_TARGETS];
-};
+#ifndef false
+  #define false 0
+#endif
 
-#define BIT(N)  1 << N
+#ifndef true
+  #define true 1
+#endif
+
 #endif
