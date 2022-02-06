@@ -10,11 +10,14 @@ void ping_thread(void *param)
     sps_t sps = param;
     rt_err_t err;
 
-    rt_uint32_t msg = 1 ;
+    rt_uint32_t msg ;
 
-    rt_kprintf("Sending ping: %d \n", msg);
-
+    msg = do_i_freeze(80);
+    rt_mb_send(sps->gpio[0], msg);
+    rt_kprintf("Sending status: %d \n", msg );
+    msg = 1;
     rt_mb_send(sps->mb_ping, msg);
+    rt_kprintf("Sending ping: %d \n", msg);
 }
 
 void irq_out_handler(void *param)

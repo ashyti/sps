@@ -17,6 +17,9 @@ struct target
 };
 typedef struct target *target_t;
 
+enum pwr_state{ON, OFF, FROZEN};
+
+rt_uint8_t do_i_freeze(rt_uint8_t probability);
 static void simulation_thread_entry(void *param);
 target_t target_init(rt_mailbox_t mb_ping, rt_mailbox_t mb_gpio);
 rt_err_t target_start(struct target *target);
