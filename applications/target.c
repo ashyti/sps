@@ -59,7 +59,7 @@ static void simulation_thread_entry(void* parameter)
                     // ping back
                     rt_uint32_t msg = 1 ;
                     rt_kprintf("Target: Ping back: %d \n", msg);
-                    rt_mb_send(target->mb_ping, msg);
+                    rt_mb_send(target->mb_ping_ack, msg);
                 }
             }
         }
@@ -91,7 +91,7 @@ static void simulation_thread_entry(void* parameter)
 }
 
 
-target_t target_init(rt_mailbox_t mb_ping, rt_mailbox_t mb_gpio)
+target_t target_init(rt_mailbox_t mb_ping, rt_mailbox_t mb_ping_ack, rt_mailbox_t mb_gpio)
 {
     //printf("Initializing target\n");
 
@@ -103,6 +103,7 @@ target_t target_init(rt_mailbox_t mb_ping, rt_mailbox_t mb_gpio)
                                                     TARGET_TICK,
                                                     TARGET_PERIOD);
     target.mb_ping = mb_ping;
+    target.mb_ping_ack = mb_ping_ack;
     target.mb_gpio = mb_gpio;
 
     //printf("Target initialized\n");

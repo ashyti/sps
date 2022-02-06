@@ -2,6 +2,7 @@
 #define __SPS_H__
 
 #include "main.h"
+#define SPS_PING_PERIOD 100     // 1 second
 
 struct sps {
     rt_thread_t irq_in_handler;
@@ -15,6 +16,7 @@ struct sps {
     rt_mailbox_t irq_out;
     rt_mailbox_t irq_in;
     rt_mailbox_t mb_ping;
+    rt_mailbox_t mb_ping_ack;
     rt_mailbox_t gpio[SPS_NUM_TARGETS];
 
     rt_uint8_t targets[SPS_NUM_TARGETS];

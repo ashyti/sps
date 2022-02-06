@@ -30,7 +30,7 @@ int main(void)
         goto clean_sps;
     }
 
-    target = target_init(sps->mb_ping, sps->gpio[0]);
+    target = target_init(sps->mb_ping, sps->mb_ping_ack, sps->gpio[0]);
     if (!target) {
         printf("Failed to create targets\n");
         ret = RT_ERROR;

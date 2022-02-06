@@ -123,9 +123,7 @@ sps_t sps_init(void)
                                                  ping_thread,
                                                  &sps,
                                                  SPS_THREAD_STACK_SIZE,
-                                                 1,
-                                                 1,
-                                                 100);
+                                                 1, 1, SPS_PING_PERIOD);
 
     sps.irq_out = rt_mb_create("irq_out", sizeof(rt_uint8_t),
                                RT_IPC_FLAG_FIFO);
@@ -140,7 +138,12 @@ sps_t sps_init(void)
     sps.mb_ping = rt_mb_create("mb_ping", sizeof(rt_uint8_t),
                                RT_IPC_FLAG_FIFO);
     if (!sps.mb_ping)
-        goto mb_delete_in;
+        goto mb_delete_ping;
+
+    sps.mb_ping_ack = rt_mb_create("mb_ping_ack", sizeof(rt_uint8_t),
+                               RT_IPC_FLAG_FIFO);
+    if (!sps.mb_ping_ack)
+        goto mb_delete_ping;
 
     sps.gpio[0] = rt_mb_create("mb_gpio", sizeof(rt_uint8_t),
                                 RT_IPC_FLAG_FIFO);
@@ -153,6 +156,7 @@ sps_t sps_init(void)
 
 mb_delete_ping:
     rt_mb_delete(sps.mb_ping);
+    rt_mb_delete(sps.mb_ping_ack);
 mb_delete_in:
     rt_mb_delete(sps.irq_in);
 mb_delete_out:
@@ -170,6 +174,7 @@ void sps_delete(sps_t sps)
     rt_mutex_delete(sps->target_mutex);
 
     rt_mb_delete(sps->mb_ping);
+    rt_mb_delete(sps->mb_ping_ack);
     rt_mb_delete(sps->irq_in);
     rt_mb_delete(sps->irq_out);
 
