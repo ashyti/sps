@@ -3,6 +3,7 @@
 
 #include "main.h"
 #define SPS_PING_PERIOD 100     // 1 second
+#define PONG_COUNT      8
 
 struct sps {
     rt_thread_t irq_in_handler;
@@ -20,6 +21,7 @@ struct sps {
     rt_mailbox_t gpio[SPS_NUM_TARGETS];
 
     rt_uint8_t targets[SPS_NUM_TARGETS];
+    rt_uint8_t targets_pong[SPS_NUM_TARGETS];
     rt_mutex_t target_mutex; /* guards the targets */
 };
 typedef struct sps *sps_t;

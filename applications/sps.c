@@ -9,14 +9,8 @@ void ping_thread(void *param)
 {
     sps_t sps = param;
     rt_err_t err;
-
     rt_uint32_t msg ;
-
-    /*
-    msg = do_i_freeze(80);
-    rt_mb_send(sps->gpio[0], msg);
-    rt_kprintf("Sending status: %d \n", msg );
-     */
+    rt_uint32_t msg_targets ;
 
     //Send ping
     for (rt_uint8_t i = 0 ; i < SPS_NUM_TARGETS ; i++)
@@ -28,13 +22,41 @@ void ping_thread(void *param)
 
 
     //Read ping ack
-    /*
-    err = rt_mb_recv(sps->mb_ping_ack, &msg, 200); //Wait for 1 second
-    if (err == -RT_ETIMEOUT)
+
+    msg_targets = 0x1111;
+    err = rt_mb_recv(sps->mb_ping_ack, &msg_targets, 100); //Wait 10 tick (0.1 second)
+
+    sps->targets_pong[0]++;
+    sps->targets_pong[1]++;
+    sps->targets_pong[2]++;
+    sps->targets_pong[3]++;
+
+    if(msg_targets == 0x0001)
     {
-        rt_kprintf("SPS: failed to receive ping ACK\n");
+        sps->targets_pong[0] = 0;
     }
-    */
+    if(msg_targets == 0x0010)
+    {
+        sps->targets_pong[1] = 0;
+    }
+    if(msg_targets == 0x0100)
+    {
+        sps->targets_pong[2] = 0;
+    }
+    if(msg_targets == 0x1000)
+    {
+        sps->targets_pong[3] = 0;
+    }
+
+    for (rt_uint8_t i = 0 ; i < SPS_NUM_TARGETS ; i++)
+    {
+        if (sps->targets_pong[i] == PONG_COUNT)
+        {
+            printf("******************Target[%d] is DOWN************** \n", i);
+            sps->targets_pong[i] = 0 ; //reset
+        }
+    }
+
 }
 
 void irq_out_handler(void *param)
@@ -100,7 +122,7 @@ void irq_in_handler(void *param)
 
             rt_uint8_t new_target = !!(targets & (1 << i));
 
-            if (new_target ^ sps->targets[i])
+            if (!(new_target ^ sps->targets[i]))
                 continue;
 
             printf("SPS: Sending to GPIO_%d:%d\n",i,new_target);

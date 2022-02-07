@@ -33,13 +33,12 @@ int main(void)
 
     for (rt_uint8_t i = 0 ; i < SPS_NUM_TARGETS ; i++)
     {
-        target_init(&target[i], sps->mb_ping[i], sps->mb_ping_ack, sps->gpio[i], i);
-        /*
-        if (!target) {
-            printf("Failed to create targets\n");
-            ret = RT_ERROR;
+        ret = target_init(&target[i], sps->mb_ping[i], sps->mb_ping_ack, sps->gpio[i], i);
+        if (ret)
+        {
+            printf("Failed to start Target[%d]", i);
+            goto error_exit;
         }
-        */
     }
 
 
@@ -58,11 +57,11 @@ int main(void)
     for (rt_uint8_t i = 0 ; i < SPS_NUM_TARGETS ; i++)
     {
         ret = target_start(&target[i]);
-    }
-
-    if (ret) {
-        printf("Failed to start target");
-        goto error_exit;
+        if (ret)
+        {
+            printf("Failed to start target");
+            goto error_exit;
+        }
     }
 
     return RT_EOK;
