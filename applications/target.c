@@ -93,7 +93,7 @@ static void simulation_thread_entry(void* parameter)
 rt_err_t target_init(struct target *target, rt_mailbox_t mb_ping, rt_mailbox_t mb_ping_ack, rt_mailbox_t mb_gpio, rt_uint8_t i)
 {
     //printf("Initializing target [%d]\n",i);
-
+    rt_uint8_t period;
     char name[] = "targetx";
     name[sizeof(name)-2] = 48 + i;
     target->id = i;
@@ -101,13 +101,16 @@ rt_err_t target_init(struct target *target, rt_mailbox_t mb_ping, rt_mailbox_t m
     target->mb_ping_ack = mb_ping_ack;
     target->mb_gpio = mb_gpio;
     target->status = OFF;
+
+    while((period = rand() % 100) < 10); //We want a tick range 10-100 (0.1 - 1 seconds)
+
     target->simulation_thread = rt_thread_create_periodic(name,
                                                     simulation_thread_entry,
                                                     target,
                                                     TARGET_STACK_SIZE,
                                                     TARGET_PRIORITY,
                                                     TARGET_TICK,
-                                                    TARGET_PERIOD);
+                                                    period);
 
 
     //printf("Target initialized [%d]\n",i);
