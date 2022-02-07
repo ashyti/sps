@@ -12,7 +12,8 @@ int main(void)
 {
     sps_t sps;
     host_t host;
-    target_t target;
+    //target_t target[SPS_NUM_TARGETS] = {};
+    extern struct target target[SPS_NUM_TARGETS];
     rt_err_t ret;
 
     printf("Welcome to SPS!\n");
@@ -30,11 +31,17 @@ int main(void)
         goto clean_sps;
     }
 
-    target = target_init(sps->mb_ping, sps->mb_ping_ack, sps->gpio[0]);
-    if (!target) {
-        printf("Failed to create targets\n");
-        ret = RT_ERROR;
+    for (rt_uint8_t i = 0 ; i < SPS_NUM_TARGETS ; i++)
+    {
+        target_init(&target[i], sps->mb_ping[i], sps->mb_ping_ack, sps->gpio[i], i);
+        /*
+        if (!target) {
+            printf("Failed to create targets\n");
+            ret = RT_ERROR;
+        }
+        */
     }
+
 
     ret = sps_start(sps);
     if (ret) {
@@ -47,7 +54,11 @@ int main(void)
         printf("Failed to start host");
         goto error_exit;
     }
-    ret = target_start(target);
+
+    for (rt_uint8_t i = 0 ; i < SPS_NUM_TARGETS ; i++)
+    {
+        ret = target_start(&target[i]);
+    }
 
     if (ret) {
         printf("Failed to start target");

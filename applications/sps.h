@@ -15,7 +15,7 @@ struct sps {
 
     rt_mailbox_t irq_out;
     rt_mailbox_t irq_in;
-    rt_mailbox_t mb_ping;
+    rt_mailbox_t mb_ping[SPS_NUM_TARGETS];
     rt_mailbox_t mb_ping_ack;
     rt_mailbox_t gpio[SPS_NUM_TARGETS];
 

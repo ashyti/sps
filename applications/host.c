@@ -26,7 +26,7 @@ static void action_thread(void *param)
         int choice = rand() % 10;
 
         /* we want 90% of chance that the status is not changed */
-        if (choice >= 9)
+        if (choice >= 5)
         {
             changed = true;
             host->targets[i] = !host->targets[i];

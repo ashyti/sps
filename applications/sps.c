@@ -12,12 +12,29 @@ void ping_thread(void *param)
 
     rt_uint32_t msg ;
 
+    /*
     msg = do_i_freeze(80);
     rt_mb_send(sps->gpio[0], msg);
     rt_kprintf("Sending status: %d \n", msg );
-    msg = 1;
-    rt_mb_send(sps->mb_ping, msg);
-    rt_kprintf("Sending ping: %d \n", msg);
+     */
+
+    //Send ping
+    for (rt_uint8_t i = 0 ; i < SPS_NUM_TARGETS ; i++)
+    {
+        msg = 1;
+        rt_mb_send(sps->mb_ping[i], msg);
+        rt_kprintf("SPS: Sending ping[%d]: %d \n",i, msg);
+    }
+
+
+    //Read ping ack
+    /*
+    err = rt_mb_recv(sps->mb_ping_ack, &msg, 200); //Wait for 1 second
+    if (err == -RT_ETIMEOUT)
+    {
+        rt_kprintf("SPS: failed to receive ping ACK\n");
+    }
+    */
 }
 
 void irq_out_handler(void *param)
@@ -30,7 +47,7 @@ void irq_out_handler(void *param)
         rt_ubase_t targets;
         int i;
 
-        err = rt_mb_recv(sps->mb_ping, &targets, RT_WAITING_FOREVER);
+        err = rt_mb_recv(sps->mb_ping_ack, &targets, RT_WAITING_FOREVER);
         if (err)
         {
             rt_kprintf("SPS: failed to receive message from ping. Skipping\n");
@@ -74,17 +91,19 @@ void irq_in_handler(void *param)
         err = rt_mutex_take(sps->target_mutex, RT_WAITING_FOREVER);
         if (err)
         {
-            rt_kprintf("SPS: failed to synchronise. Skipping\n");
+            rt_kprintf("SPS: failed to synchronize. Skipping\n");
             continue;
         }
 
         for (i = 0; i < SPS_NUM_TARGETS; i++)
         {
-            rt_uint8_t new_target = !!(targets | (1 << i));
+
+            rt_uint8_t new_target = !!(targets & (1 << i));
 
             if (new_target ^ sps->targets[i])
                 continue;
 
+            printf("SPS: Sending to GPIO_%d:%d\n",i,new_target);
             rt_mb_send(sps->gpio[i], new_target);
             sps->targets[i] = new_target;
         }
@@ -135,18 +154,28 @@ sps_t sps_init(void)
     if (!sps.irq_in)
         goto mb_delete_out;
 
-    sps.mb_ping = rt_mb_create("mb_ping", sizeof(rt_uint8_t),
+    for (rt_uint8_t i = 0 ; i < SPS_NUM_TARGETS ; i++)
+    {
+        char name1[] = "pingx";
+        name1[sizeof(name1)-2] = 48 + i;
+        sps.mb_ping[i] = rt_mb_create(name1, sizeof(rt_uint8_t),
                                RT_IPC_FLAG_FIFO);
-    if (!sps.mb_ping)
-        goto mb_delete_ping;
 
-    sps.mb_ping_ack = rt_mb_create("mb_ping_ack", sizeof(rt_uint8_t),
+        if (!sps.mb_ping[i])
+            goto mb_delete_ping;
+
+        char name2[] = "gpiox";
+        name2[sizeof(name2)-2] = 48 + i;
+        sps.gpio[i] = rt_mb_create(name2, sizeof(rt_uint8_t),
+                                    RT_IPC_FLAG_FIFO);
+    }
+
+
+    sps.mb_ping_ack = rt_mb_create("pingack", sizeof(rt_uint8_t),
                                RT_IPC_FLAG_FIFO);
     if (!sps.mb_ping_ack)
         goto mb_delete_ping;
 
-    sps.gpio[0] = rt_mb_create("mb_gpio", sizeof(rt_uint8_t),
-                                RT_IPC_FLAG_FIFO);
 
     sps.target_mutex = rt_mutex_create("sps_target_mutex", RT_IPC_FLAG_FIFO);
     if (!sps.target_mutex)
