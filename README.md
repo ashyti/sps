@@ -47,8 +47,8 @@ When the user wants to set the status of a target, either by powering it on, or 
 
 ### GPIO
 From the previous email, the SPS decodes the desired status for each target and will send individual mails to each of them with the power command. There are individual mailboxes shared between the SPS and each of the targets, so each target is separated from the others and only knows about its own status.
-![GPIO Mailbox](/images/gpio_mailbox)
+![GPIO Mailbox](/images/gpio_mailbox.png)
 
 ### Ping
 A mail  containing the data 0x01, is sent to every target in the system and waits for the response. If a target is running, it will return a mail containing the data of its internal address, either  0b0001, 0b0010, 0b0100 or 0b1000, depending on which target is responding. This will help the SPS determine who is sending the mail.
-![Ping Mailbox](/images/ping_mailbox)
+![Ping Mailbox](/images/ping_mailbox.png)
