@@ -9,7 +9,7 @@ extern struct target target[SPS_NUM_TARGETS] = {};
 rt_uint8_t do_i_freeze(rt_uint8_t probability)
 {
     rt_uint8_t num = rand() % 100 ;
-    return (num > probability) ? 0 : 1 ;
+    return (num >= probability) ? 0 : 1 ;
 }
 
 static void simulation_thread_entry(void* parameter)
@@ -57,7 +57,7 @@ static void simulation_thread_entry(void* parameter)
                 {
                     // ping back
                     rt_uint32_t msg = 1 << i;
-                    rt_kprintf("Target[%d]: Ping back: %d \n", i, msg);
+                    //rt_kprintf("Target[%d]: Ping back: %d \n", i, msg);
                     rt_mb_send(target->mb_ping_ack, msg);
                 }
             }
@@ -79,7 +79,7 @@ static void simulation_thread_entry(void* parameter)
             rt_kprintf("Target[%d]: Powered OFF command triggered.\n",i);
             target->status = OFF;
         }
-        else
+        else if (gpio_status == 1)
         {
             rt_kprintf("Target[%d]: FROZEN, need to execute OFF command.\n",i);
         }

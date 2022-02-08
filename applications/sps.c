@@ -11,56 +11,79 @@ void ping_thread(void *param)
     rt_err_t err;
     rt_uint32_t msg ;
     rt_uint32_t msg_targets ;
+    rt_uint8_t has_changed = 0;
+    rt_uint32_t msg_targets_status;
 
     //Send ping
     for (rt_uint8_t i = 0 ; i < SPS_NUM_TARGETS ; i++)
     {
         msg = 1;
         rt_mb_send(sps->mb_ping[i], msg);
-        rt_kprintf("SPS: Sending ping[%d]: %d \n",i, msg);
+        //rt_kprintf("SPS: Sending ping[%d]: %d \n",i, msg);
     }
 
 
     //Read ping ack
+    for (rt_uint8_t i = 0 ; i < SPS_NUM_TARGETS ; i++)
+    {
+        msg_targets = 0x1111;       //Setting value to anything but the values we want
+        err = rt_mb_recv(sps->mb_ping_ack, &msg_targets, RT_WAITING_NO);
+        sps->targets_pong[0]++;
+        sps->targets_pong[1]++;
+        sps->targets_pong[2]++;
+        sps->targets_pong[3]++;
 
-    msg_targets = 0x1111;
-    err = rt_mb_recv(sps->mb_ping_ack, &msg_targets, 100); //Wait 10 tick (0.1 second)
+        if(msg_targets == 1)
+        {
+            sps->targets_pong[0] = 0;
+        }
+        if(msg_targets == 2)
+        {
+            sps->targets_pong[1] = 0;
+        }
+        if(msg_targets == 4)
+        {
+            sps->targets_pong[2] = 0;
+        }
+        if(msg_targets == 8)
+        {
+            sps->targets_pong[3] = 0;
+        }
 
-    sps->targets_pong[0]++;
-    sps->targets_pong[1]++;
-    sps->targets_pong[2]++;
-    sps->targets_pong[3]++;
+    }
 
-    if(msg_targets == 0x0001)
-    {
-        sps->targets_pong[0] = 0;
-    }
-    if(msg_targets == 0x0010)
-    {
-        sps->targets_pong[1] = 0;
-    }
-    if(msg_targets == 0x0100)
-    {
-        sps->targets_pong[2] = 0;
-    }
-    if(msg_targets == 0x1000)
-    {
-        sps->targets_pong[3] = 0;
-    }
 
     for (rt_uint8_t i = 0 ; i < SPS_NUM_TARGETS ; i++)
     {
-        if (sps->targets_pong[i] == PONG_COUNT)
+        if (sps->targets_pong[i] >= PONG_COUNT)
         {
-            printf("******************Target[%d] is DOWN************** \n", i);
             sps->targets_pong[i] = 0 ; //reset
+            sps->targets_feedback[i] = 0;
+            has_changed = 1;
         }
+        else
+        {
+            sps->targets_feedback[i] = 1;
+        }
+    }
+
+    if(has_changed)
+    {
+        has_changed = 0;
+        msg_targets_status = 0 ;
+        for (rt_int8_t i = (SPS_NUM_TARGETS-1) ; i >= 0 ; i--)
+        {
+            msg_targets_status |= (sps->targets_feedback[i] << i);
+        }
+        rt_mb_send(sps->mb_ping_irq, msg_targets_status);
+
     }
 
 }
 
 void irq_out_handler(void *param)
 {
+
     sps_t sps = param;
     rt_err_t err;
 
@@ -69,27 +92,18 @@ void irq_out_handler(void *param)
         rt_ubase_t targets;
         int i;
 
-        err = rt_mb_recv(sps->mb_ping_ack, &targets, RT_WAITING_FOREVER);
-        if (err)
-        {
-            rt_kprintf("SPS: failed to receive message from ping. Skipping\n");
-            continue;
-        }
-
-        err = rt_mutex_take(sps->target_mutex, RT_WAITING_FOREVER);
-        if (err)
-        {
-            rt_kprintf("Host: failed to synchronise. Skipping\n");
-            continue;
-        }
+        err = rt_mb_recv(sps->mb_ping_irq, &targets, RT_WAITING_FOREVER);
 
         for (i = 0; i < SPS_NUM_TARGETS; i++)
         {
             rt_uint8_t current_target = (targets >> i) & 0x1;
+            if (current_target == 0)
+            {
+                printf("SPS:Target[%d] is DOWN\n", i);
+            }
 
-            sps->targets[i] = !!current_target;
+            //sps->targets[i] = !!current_target;
         }
-        rt_mutex_release(sps->target_mutex);
     }
 }
 
@@ -193,11 +207,15 @@ sps_t sps_init(void)
     }
 
 
-    sps.mb_ping_ack = rt_mb_create("pingack", sizeof(rt_uint8_t),
+    sps.mb_ping_ack = rt_mb_create("pingack", sizeof(rt_uint32_t),
                                RT_IPC_FLAG_FIFO);
     if (!sps.mb_ping_ack)
         goto mb_delete_ping;
 
+    sps.mb_ping_irq = rt_mb_create("pingirq", sizeof(rt_uint32_t),
+                               RT_IPC_FLAG_FIFO);
+    if (!sps.mb_ping_irq)
+        goto mb_delete_ping;
 
     sps.target_mutex = rt_mutex_create("sps_target_mutex", RT_IPC_FLAG_FIFO);
     if (!sps.target_mutex)
@@ -208,6 +226,7 @@ sps_t sps_init(void)
 mb_delete_ping:
     rt_mb_delete(sps.mb_ping);
     rt_mb_delete(sps.mb_ping_ack);
+    rt_mb_delete(sps.mb_ping_irq);
 mb_delete_in:
     rt_mb_delete(sps.irq_in);
 mb_delete_out:

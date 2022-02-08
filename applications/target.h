@@ -9,7 +9,7 @@
 #define TARGET_STACK_SIZE       512
 #define TARGET_PRIORITY         1
 #define TARGET_TICK             1
-#define TARGET_FREEZE_PROB      2       /**< 2% Freeze Probability */
+#define TARGET_FREEZE_PROB      0       /**< 2% Freeze Probability */
 
 enum pwr_status{ON, OFF, FROZEN};
 
