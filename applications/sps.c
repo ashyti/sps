@@ -90,20 +90,13 @@ void irq_out_handler(void *param)
     while (1)
     {
         rt_ubase_t targets;
-        int i;
 
+        //receiving message from ping
         err = rt_mb_recv(sps->mb_ping_irq, &targets, RT_WAITING_FOREVER);
 
-        for (i = 0; i < SPS_NUM_TARGETS; i++)
-        {
-            rt_uint8_t current_target = (targets >> i) & 0x1;
-            if (current_target == 0)
-            {
-                printf("SPS:Target[%d] is DOWN\n", i);
-            }
+        //Sending message to host
+        rt_mb_send(sps->irq_out, targets);
 
-            //sps->targets[i] = !!current_target;
-        }
     }
 }
 
