@@ -1,6 +1,6 @@
 #include <rtthread.h>
 #include <stdio.h>
-
+#include <stdlib.h>
 #include "target.h"
 
 
@@ -12,7 +12,7 @@ rt_uint8_t do_i_freeze(rt_uint8_t probability)
     return (num >= probability) ? 0 : 1 ;
 }
 
-static void simulation_thread_entry(void* parameter)
+void simulation_thread_entry(void* parameter)
 {
 
     struct target *target = parameter;
@@ -22,7 +22,7 @@ static void simulation_thread_entry(void* parameter)
     rt_uint8_t i = target->id;
 
     gpio_status = 3;
-    err = rt_mb_recv(target->mb_gpio, &gpio_status, 0);
+    err = rt_mb_recv(target->mb_gpio, &gpio_status, RT_WAITING_NO);
     if(err)
     {
         //rt_kprintf("Target: failed reading GPIO. Skipping\n");
@@ -92,7 +92,6 @@ static void simulation_thread_entry(void* parameter)
 
 rt_err_t target_init(struct target *target, rt_mailbox_t mb_ping, rt_mailbox_t mb_ping_ack, rt_mailbox_t mb_gpio, rt_uint8_t i)
 {
-    //printf("Initializing target [%d]\n",i);
     rt_uint8_t period;
     char name[] = "targetx";
     name[sizeof(name)-2] = 48 + i;
@@ -112,23 +111,16 @@ rt_err_t target_init(struct target *target, rt_mailbox_t mb_ping, rt_mailbox_t m
                                                     TARGET_TICK,
                                                     period);
 
-
-    //printf("Target initialized [%d]\n",i);
-
     return RT_EOK;
 }
 
 
 rt_err_t target_start(struct target *target)
 {
-    //printf("Starting target`s threads\n");
-
     rt_thread_startup(target->simulation_thread);
-
 
     srand(time(0)); //Initialize seed for random numbers
 
-    //printf("Target`s threads started\n");
     return RT_EOK;
 }
 

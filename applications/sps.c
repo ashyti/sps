@@ -8,11 +8,11 @@ struct sps sps = { };
 void ping_thread(void *param)
 {
     sps_t sps = param;
-    rt_err_t err;
     rt_uint32_t msg ;
     rt_uint32_t msg_targets ;
     rt_uint8_t has_changed = 0;
     rt_uint32_t msg_targets_status;
+    rt_err_t err;
 
     //Send ping
     for (rt_uint8_t i = 0 ; i < SPS_NUM_TARGETS ; i++)
@@ -83,7 +83,6 @@ void ping_thread(void *param)
 
 void irq_out_handler(void *param)
 {
-
     sps_t sps = param;
     rt_err_t err;
 
@@ -96,7 +95,6 @@ void irq_out_handler(void *param)
 
         //Sending message to host
         rt_mb_send(sps->irq_out, targets);
-
     }
 }
 
