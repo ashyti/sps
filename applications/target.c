@@ -3,74 +3,64 @@
 #include <stdlib.h>
 #include "target.h"
 
-
-extern struct target target[SPS_NUM_TARGETS] = {};
-
-rt_uint8_t do_i_freeze(rt_uint8_t probability)
+static rt_uint8_t do_i_freeze(rt_uint8_t probability)
 {
     rt_uint8_t num = rand() % 100 ;
     return (num >= probability) ? 0 : 1 ;
 }
 
-void simulation_thread_entry(void* parameter)
+static void simulation_thread_entry(void* parameter)
 {
 
     struct target *target = parameter;
-    rt_err_t err;
-    rt_ubase_t gpio_status;
-    rt_ubase_t ping_status;
+    rt_ubase_t gpio_status = 3;
     rt_uint8_t i = target->id;
+    rt_err_t err;
 
-    gpio_status = 3;
-    err = rt_mb_recv(target->mb_gpio, &gpio_status, RT_WAITING_NO);
-    if(err)
+    if (target->status == ON)
     {
-        //rt_kprintf("Target: failed reading GPIO. Skipping\n");
+        rt_ubase_t ping_status;
+
+        /* Read ping */
+        err = rt_mb_recv(target->mb_ping, &ping_status, RT_WAITING_FOREVER);
+        if(!err)
+        {
+            /* ping back */
+            rt_uint32_t msg = i;
+            rt_mb_send(target->mb_ping_ack, msg);
+        }
     }
+
+    err = rt_mb_recv(target->mb_gpio, &gpio_status, RT_WAITING_NO);
 
     switch(target->status)
     {
     case ON:
-        if (gpio_status == 0)
+        /* the target is on and getting shut down */
+        if (!err && gpio_status == 0)
         {
-            rt_kprintf("Target[%d]: Powered OFF command triggered.\n",i);
+            rt_kprintf("Target[%d]: Powered OFF command triggered.\n", i);
             target->status = OFF;
+            return;
         }
-        else
-        {
-            if (do_i_freeze(TARGET_FREEZE_PROB))
-            {
-                rt_kprintf("Target[%d]: Has frozen.\n",i);
-                target->status = FROZEN;
-            }
-            else
-            {
-                //Read ping
-                ping_status = 0;
-                err = rt_mb_recv(target->mb_ping, &ping_status, RT_WAITING_FOREVER);
-                if(err)
-                {
-                    rt_kprintf("Target[%d]: failed reading Ping message. Skipping\n",i);
-                }
 
-                if (ping_status == 1)
-                {
-                    // ping back
-                    rt_uint32_t msg = 1 << i;
-                    //rt_kprintf("Target[%d]: Ping back: %d \n", i, msg);
-                    rt_mb_send(target->mb_ping_ack, msg);
-                }
-            }
+        /* the target is on and no action is taken */
+        if (do_i_freeze(TARGET_FREEZE_PROB))
+        {
+            rt_kprintf("Target[%d]: Has frozen.\n", i);
+            target->status = FROZEN;
         }
 
         break;
 
     case OFF:
-        if (gpio_status == 1)
+        /* the target is off and getting powered on */
+        if (!err && gpio_status == 1)
         {
             rt_kprintf("Target[%d]: Powered ON command triggered.\n",i);
             target->status = ON;
         }
+
         break;
 
     case FROZEN:
@@ -83,25 +73,33 @@ void simulation_thread_entry(void* parameter)
         {
             rt_kprintf("Target[%d]: FROZEN, need to execute OFF command.\n",i);
         }
+
         break;
     }
-
-    return;
 }
 
+rt_err_t target_start(struct target *target)
+{
+    return rt_thread_startup(target->simulation_thread);
+}
 
-rt_err_t target_init(struct target *target, rt_mailbox_t mb_ping, rt_mailbox_t mb_ping_ack, rt_mailbox_t mb_gpio, rt_uint8_t i)
+rt_err_t target_init(target_t target, rt_mailbox_t mb_ping,
+                     rt_mailbox_t mb_ping_ack, rt_mailbox_t mb_gpio,
+                     rt_uint8_t i)
 {
     rt_uint8_t period;
-    char name[] = "targetx";
-    name[sizeof(name)-2] = 48 + i;
+    char name[] = "targetX";
+
+    name[sizeof(name) - 2] = 48 + i;
     target->id = i;
     target->mb_ping = mb_ping;
     target->mb_ping_ack = mb_ping_ack;
     target->mb_gpio = mb_gpio;
     target->status = OFF;
 
-    while((period = rand() % 100) < 10); //We want a tick range 10-100 (0.1 - 1 seconds)
+    /* We want a tick range 10-100 (0.1 - 1 seconds) */
+    while((period = rand() % 100) < 10)
+        ;
 
     target->simulation_thread = rt_thread_create_periodic(name,
                                                     simulation_thread_entry,
@@ -111,16 +109,11 @@ rt_err_t target_init(struct target *target, rt_mailbox_t mb_ping, rt_mailbox_t m
                                                     TARGET_TICK,
                                                     period);
 
-    return RT_EOK;
+    return target->simulation_thread ? RT_EOK : RT_ERROR;
 }
 
-
-rt_err_t target_start(struct target *target)
+void target_delete(target_t target)
 {
-    rt_thread_startup(target->simulation_thread);
-
-    srand(time(0)); //Initialize seed for random numbers
-
-    return RT_EOK;
+    if (target->simulation_thread)
+        rt_thread_delete(target->simulation_thread);
 }
-

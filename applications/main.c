@@ -8,15 +8,18 @@
 #include "sps.h"
 #include "target.h"
 
+struct target target[SPS_NUM_TARGETS];
+
 int main(void)
 {
     sps_t sps;
     host_t host;
-    //target_t target[SPS_NUM_TARGETS] = {};
-    extern struct target target[SPS_NUM_TARGETS];
     rt_err_t ret;
 
     printf("Welcome to SPS!\n");
+
+    /* Initialize seed for random numbers */
+    srand(time(0));
 
     sps = sps_init();
     if (!sps) {

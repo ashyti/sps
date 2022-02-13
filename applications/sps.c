@@ -36,7 +36,7 @@ static void ping_thread(void *param)
             rt_kprintf("SPS: failed to ping target %u\n", i);
     }
 
-    /* Read pong */
+    /* Read pong until message queue is empty */
     while (1)
     {
         /* Set value to anything but the values we want */
@@ -47,21 +47,11 @@ static void ping_thread(void *param)
         if (err)
             break;
 
-        switch(msg_targets)
-        {
-        case 0x1:
-            sps->targets_pong[0] = 0;
-            break;
-        case 0x2:
-            sps->targets_pong[1] = 0;
-            break;
-        case 0x4:
-            sps->targets_pong[2] = 0;
-            break;
-        case 0x8:
-            sps->targets_pong[3] = 0;
-            break;
-        }
+        if (msg_targets > SPS_NUM_TARGETS - 1)
+            /* bad message format */
+            continue;
+
+        sps->targets_pong[msg_targets] = 0;
     }
 
     err = rt_mutex_take(sps->target_mutex, RT_WAITING_FOREVER);
@@ -279,7 +269,6 @@ thread_delete_out:
 
 static void __sps_clear_threads(sps_t sps)
 {
-
     if (sps->ping_thread)
         rt_thread_delete(sps->ping_thread);
     if (sps->irq_in_handler)
