@@ -16,7 +16,7 @@ struct sps {
     rt_mailbox_t gpio[SPS_NUM_TARGETS];
 
     rt_mutex_t target_mutex; /* guards the targets */
-    rt_uint8_t targets[SPS_NUM_TARGETS];
+    enum sps_pwr_status targets[SPS_NUM_TARGETS];
 
     rt_uint8_t targets_pong[SPS_NUM_TARGETS];
     rt_uint8_t targets_feedback[SPS_NUM_TARGETS];

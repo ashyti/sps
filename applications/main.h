@@ -16,6 +16,13 @@
   #define true 1
 #endif
 
+enum sps_pwr_status
+{
+    SPS_OFF,
+    SPS_ON,
+    SPS_FROZEN,
+};
+
 #ifndef min
 #define min(a, b) ({\
 		typeof(a) _a = a;\

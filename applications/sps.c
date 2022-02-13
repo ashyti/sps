@@ -22,7 +22,7 @@ static void ping_thread(void *param)
         rt_uint32_t msg = 1;
 
         /* target is off */
-        if (!sps->targets[i])
+        if (sps->targets[i] != SPS_ON)
             continue;
 
         /*
@@ -69,7 +69,7 @@ static void ping_thread(void *param)
     for (i = 0; i < SPS_NUM_TARGETS; i++)
     {
         /* target is off */
-        if (!sps->targets[i])
+        if (sps->targets[i] != SPS_ON)
             continue;
 
         if (sps->targets_pong[i] < SPS_PONG_COUNT)
@@ -85,7 +85,7 @@ static void ping_thread(void *param)
          * to the SPS's ping. It needs to be reported as off.
          */
         sps->targets_pong[i] = 0; /* reset */
-        sps->targets[i] = 0;
+        sps->targets[i] = SPS_FROZEN;
         has_changed = 1;
     }
 
@@ -149,10 +149,14 @@ static void irq_in_handler(void *param)
         {
             rt_uint8_t new_target = !!(targets & (1 << i));
 
-            if (!(new_target ^ sps->targets[i]))
+            /*
+             * we send ON if the target is OFF
+             * we send OFF if the target is ON or FROZEN
+             */
+            if (!(new_target ^ (sps->targets[i] != SPS_OFF)))
                 continue;
 
-            printf("SPS: Sending to GPIO_%d:%d\n",i,new_target);
+            printf("SPS: Setting gpio %u for target %d\n", new_target, i);
             rt_mb_send(sps->gpio[i], new_target);
             sps->targets[i] = new_target;
         }

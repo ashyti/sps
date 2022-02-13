@@ -33,7 +33,7 @@ static void simulation_thread_entry(void* parameter)
         {
             rt_kprintf("Target[%u], failed to read ping\n", i);
         }
-        else if (ping_status == 1 && target->status == ON)
+        else if (ping_status == 1 && target->status == SPS_ON)
         {
             rt_uint32_t msg = i;
 
@@ -45,12 +45,12 @@ static void simulation_thread_entry(void* parameter)
 
     switch(target->status)
     {
-    case ON:
+    case SPS_ON:
         /* the target is on and getting shut down */
         if (!err && gpio_status == 0)
         {
             rt_kprintf("Target[%d]: Powered OFF command triggered.\n", i);
-            target->status = OFF;
+            target->status = SPS_OFF;
             return;
         }
 
@@ -58,25 +58,25 @@ static void simulation_thread_entry(void* parameter)
         if (do_i_freeze(TARGET_FREEZE_PROB))
         {
             rt_kprintf("Target[%d]: Has frozen.\n", i);
-            target->status = FROZEN;
+            target->status = SPS_FROZEN;
         }
 
         return;
 
-    case OFF:
+    case SPS_OFF:
         /* the target is off and getting powered on */
         if (!err && gpio_status == 1)
         {
             rt_kprintf("Target[%d]: Powered ON command triggered.\n", i);
-            target->status = ON;
+            target->status = SPS_ON;
         }
         return;
 
-    case FROZEN:
+    case SPS_FROZEN:
         if (gpio_status == 0)
         {
             rt_kprintf("Target[%d]: Powered OFF command triggered.\n", i);
-            target->status = OFF;
+            target->status = SPS_OFF;
         }
 
         return;
@@ -102,7 +102,7 @@ rt_err_t target_init(target_t target, rt_mailbox_t mb_ping,
     target->mb_ping = mb_ping;
     target->mb_ping_ack = mb_ping_ack;
     target->mb_gpio = mb_gpio;
-    target->status = OFF;
+    target->status = SPS_OFF;
 
     /* We want a tick range 10-100 (0.1 - 1 seconds) */
     while((period = rand() % 100) < 10)

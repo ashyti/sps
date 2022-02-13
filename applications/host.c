@@ -29,10 +29,13 @@ static void action_thread(void *param)
         if (choice >= 9)
         {
             changed = true;
-            host->targets[i] = !host->targets[i];
+            if (host->targets[i] == SPS_OFF)
+                host->targets[i] = SPS_ON;
+            else
+                host->targets[i] = SPS_OFF;
         }
 
-        if (host->targets[i])
+        if (host->targets[i] == SPS_ON)
             targets |= (1 << i);
     }
     rt_mutex_release(host->target_mutex);
@@ -72,10 +75,14 @@ static void feedback_irq_out(void *param)
         {
             rt_uint8_t current_target = (targets >> i) & 0x1;
 
-            host->targets[i] = !!current_target;
-            if (current_target == 0)
+            /*
+             * we assume that machines only power off,
+             * never power on by themselves.
+             */
+            if(!current_target && host->targets[i] == SPS_ON)
             {
                 printf("HOST:Target[%d] is DOWN\n", i);
+                host->targets[i] = SPS_FROZEN;
             }
         }
         rt_mutex_release(host->target_mutex);
