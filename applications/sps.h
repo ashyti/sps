@@ -2,17 +2,11 @@
 #define __SPS_H__
 
 #include "main.h"
-#define SPS_PING_PERIOD 100     // 1 second
-#define PONG_COUNT      40
 
 struct sps {
     rt_thread_t irq_in_handler;
     rt_thread_t irq_out_handler;
-    /*
-    rt_thread_t gpio_setting;
-    */
     rt_thread_t ping_thread;
-
 
     rt_mailbox_t irq_out;
     rt_mailbox_t irq_in;
@@ -21,10 +15,11 @@ struct sps {
     rt_mailbox_t mb_ping_irq;
     rt_mailbox_t gpio[SPS_NUM_TARGETS];
 
+    rt_mutex_t target_mutex; /* guards the targets */
     rt_uint8_t targets[SPS_NUM_TARGETS];
+
     rt_uint8_t targets_pong[SPS_NUM_TARGETS];
     rt_uint8_t targets_feedback[SPS_NUM_TARGETS];
-    rt_mutex_t target_mutex; /* guards the targets */
 };
 typedef struct sps *sps_t;
 

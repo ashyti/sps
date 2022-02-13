@@ -17,8 +17,8 @@ void simulation_thread_entry(void* parameter)
 
     struct target *target = parameter;
     rt_err_t err;
-    rt_uint32_t gpio_status;
-    rt_uint32_t ping_status;
+    rt_ubase_t gpio_status;
+    rt_ubase_t ping_status;
     rt_uint8_t i = target->id;
 
     gpio_status = 3;
