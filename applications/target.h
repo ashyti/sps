@@ -3,17 +3,11 @@
 
 #include "main.h"
 
-#define TARGET_PERIOD           100
-#define TARGET_STACK_SIZE       512
-#define TARGET_PRIORITY         1
-#define TARGET_TICK             1
-#define TARGET_FREEZE_PROB      0       /**< 2% Freeze Probability */
-
 enum sps_pwr_status
 {
+    OFF = 100,
     ON,
-    OFF,
-    FROZEN
+    FROZEN,
 };
 
 struct target

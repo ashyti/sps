@@ -1,32 +1,42 @@
 #include <rtthread.h>
 #include <stdio.h>
 #include <stdlib.h>
+
 #include "target.h"
+
+#define TARGET_PERIOD           100
+#define TARGET_STACK_SIZE       512
+#define TARGET_PRIORITY           1
+#define TARGET_TICK               1
+#define TARGET_FREEZE_PROB        1       /**< 2% Freeze Probability */
 
 static rt_uint8_t do_i_freeze(rt_uint8_t probability)
 {
-    rt_uint8_t num = rand() % 100 ;
-    return (num >= probability) ? 0 : 1 ;
+    rt_uint8_t num = rand() % 100;
+
+    return (num >= probability) ? 0 : 1;
 }
 
 static void simulation_thread_entry(void* parameter)
 {
-
     struct target *target = parameter;
     rt_ubase_t gpio_status = 3;
     rt_uint8_t i = target->id;
+    rt_ubase_t ping_status = (rt_ubase_t) -1;
     rt_err_t err;
 
-    if (target->status == ON)
+    if (target->mb_ping->entry)
     {
-        rt_ubase_t ping_status;
-
         /* Read ping */
-        err = rt_mb_recv(target->mb_ping, &ping_status, RT_WAITING_FOREVER);
-        if(!err)
+        err = rt_mb_recv(target->mb_ping, &ping_status, RT_WAITING_NO);
+        if (err)
         {
-            /* ping back */
+            rt_kprintf("Target[%u], failed to read ping\n", i);
+        }
+        else if (ping_status == 1 && target->status == ON)
+        {
             rt_uint32_t msg = i;
+
             rt_mb_send(target->mb_ping_ack, msg);
         }
     }
@@ -51,31 +61,28 @@ static void simulation_thread_entry(void* parameter)
             target->status = FROZEN;
         }
 
-        break;
+        return;
 
     case OFF:
         /* the target is off and getting powered on */
         if (!err && gpio_status == 1)
         {
-            rt_kprintf("Target[%d]: Powered ON command triggered.\n",i);
+            rt_kprintf("Target[%d]: Powered ON command triggered.\n", i);
             target->status = ON;
         }
-
-        break;
+        return;
 
     case FROZEN:
         if (gpio_status == 0)
         {
-            rt_kprintf("Target[%d]: Powered OFF command triggered.\n",i);
+            rt_kprintf("Target[%d]: Powered OFF command triggered.\n", i);
             target->status = OFF;
         }
-        else if (gpio_status == 1)
-        {
-            rt_kprintf("Target[%d]: FROZEN, need to execute OFF command.\n",i);
-        }
 
-        break;
+        return;
     }
+
+    return;
 }
 
 rt_err_t target_start(struct target *target)

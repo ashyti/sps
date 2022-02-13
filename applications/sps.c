@@ -3,7 +3,7 @@
 
 #include "sps.h"
 
-#define SPS_PONG_COUNT   40
+#define SPS_PONG_COUNT    3
 #define SPS_PING_PERIOD 100 /* 1 second */
 
 struct sps sps = { };
@@ -42,10 +42,15 @@ static void ping_thread(void *param)
         /* Set value to anything but the values we want */
         rt_ubase_t msg_targets = 0x1111;
 
-        /* read until there is nothing in the queue */
-        rt_mb_recv(sps->mb_ping_ack, &msg_targets, RT_WAITING_NO);
-        if (err)
+        if (!sps->mb_ping_ack->entry)
             break;
+
+        /* read until there is nothing in the queue */
+        err = rt_mb_recv(sps->mb_ping_ack, &msg_targets, RT_WAITING_NO);
+        if (err) {
+            rt_kprintf("SPS: failed to check target status\n", i);
+            break;
+        }
 
         if (msg_targets > SPS_NUM_TARGETS - 1)
             /* bad message format */
@@ -142,7 +147,6 @@ static void irq_in_handler(void *param)
 
         for (i = 0; i < SPS_NUM_TARGETS; i++)
         {
-
             rt_uint8_t new_target = !!(targets & (1 << i));
 
             if (!(new_target ^ sps->targets[i]))

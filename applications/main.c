@@ -8,7 +8,7 @@
 #include "sps.h"
 #include "target.h"
 
-struct target target[SPS_NUM_TARGETS];
+struct target target[SPS_NUM_TARGETS] = { };
 
 int main(void)
 {
