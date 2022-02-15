@@ -6,6 +6,7 @@
 #include "host.h"
 #include "sps.h"
 #include "target.h"
+#include "cpu_thread.h"
 
 struct target target[SPS_NUM_TARGETS] = { };
 
@@ -14,11 +15,14 @@ int main(void)
     sps_t sps;
     host_t host;
     rt_err_t ret;
+    rt_thread_t get_cpu_use_thread = RT_NULL;
 
     printf("Welcome to SPS!\n");
 
     /* Initialize seed for random numbers */
     srand(time(0));
+
+    get_cpu_use_thread = cpu_thread_init(get_cpu_use_thread);
 
     sps = sps_init();
     if (!sps) {
@@ -43,6 +47,7 @@ int main(void)
         }
     }
 
+    cpu_thread_start(get_cpu_use_thread);
 
     ret = sps_start(sps);
     if (ret) {
@@ -65,6 +70,7 @@ int main(void)
             goto error_exit;
         }
     }
+
 
     return RT_EOK;
 
