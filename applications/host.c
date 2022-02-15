@@ -21,7 +21,7 @@ static void action_thread(void *param)
         return;
     }
 
-    for (i = 0; i < sizeof(targets); i++)
+    for (i = 0; i < SPS_NUM_TARGETS; i++)
     {
         int choice = rand() % 10;
 

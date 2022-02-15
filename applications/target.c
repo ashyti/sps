@@ -5,10 +5,42 @@
 #include "target.h"
 
 #define TARGET_PERIOD           100
-#define TARGET_STACK_SIZE       512
+#define TARGET_STACK_SIZE       102400
 #define TARGET_PRIORITY           1
 #define TARGET_TICK               1
 #define TARGET_FREEZE_PROB        1       /**< 2% Freeze Probability */
+
+#define SPS_MATRIX_SIZE     300
+#define NUM_ATTEMPTS        5
+
+
+
+static void __random_function(void)
+{
+   char matrix[SPS_MATRIX_SIZE][SPS_MATRIX_SIZE];
+   char result[SPS_MATRIX_SIZE] = { }; /* intialize to 0 */
+   char vector[SPS_MATRIX_SIZE];
+
+   for (int i = 0; i < SPS_MATRIX_SIZE; i++)
+   {
+       for (int j = 0; j < SPS_MATRIX_SIZE; j++)
+           matrix[i][j] = rand();
+
+       vector[i] = rand();
+   }
+
+   for (int i = 0; i < SPS_MATRIX_SIZE; i++)
+   {
+       for (int j = 0; j < SPS_MATRIX_SIZE; j++)
+           result[i] += matrix[i][j] * vector[j];
+   }
+}
+
+void random_function()
+{
+    for (int i = 0; i < NUM_ATTEMPTS; i++)
+    __random_function();
+}
 
 static rt_uint8_t do_i_freeze(rt_uint8_t probability)
 {
@@ -24,6 +56,8 @@ static void simulation_thread_entry(void* parameter)
     rt_uint8_t i = target->id;
     rt_ubase_t ping_status = (rt_ubase_t) -1;
     rt_err_t err;
+
+    random_function();
 
     if (target->mb_ping->entry)
     {

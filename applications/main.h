@@ -4,7 +4,7 @@
 #include <rtdef.h>
 
 #define SPS_THREAD_STACK_SIZE   1024
-#define SPS_NUM_TARGETS            4
+#define SPS_NUM_TARGETS           32
 
 #define bool _Bool
 
